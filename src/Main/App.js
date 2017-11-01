@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { browserHistory, Link } from 'react-router';
 import ReactTooltip from 'react-tooltip';
+import Toggle from 'react-toggle';
 
 import fetchWcl from 'common/fetchWcl';
 import getFightName from 'common/getFightName';
@@ -97,10 +98,15 @@ class App extends Component {
       dataVersion: 0,
       bossId: null,
       config: null,
+      showSettings: null,
+      ads: false,
+      miner: false,
+      patreon: false,
     };
 
     this.handleReportSelecterSubmit = this.handleReportSelecterSubmit.bind(this);
     this.handleRefresh = this.handleRefresh.bind(this);
+    this.handleSettingsClick = this.handleSettingsClick.bind(this);
   }
   getChildContext() {
     return {
@@ -496,10 +502,15 @@ class App extends Component {
     });
   }
 
+  handleSettingsClick(e) {
+    this.setState({
+      showSettings: this.state.showSettings ? null : e.currentTarget.getBoundingClientRect(),
+    });
+  }
   renderNavigationBar() {
     const { report, combatants, parser, progress } = this.state;
 
-    return (
+    return [
       <nav>
         <div className="container">
           <div className="menu-item logo main">
@@ -530,8 +541,8 @@ class App extends Component {
             />
           )}
           <div className="spacer" />
-          <div className="menu-item left-line main">
-            <a href="#settings">
+          <div className="menu-item left-line main" style={{ position: 'relative' }}>
+            <a href="#settings" onClick={this.handleSettingsClick}>
               <SettingsIcon className="icon" style={{ height: '1.8em' }} /><span className="optional"> Settings</span>
             </a>
           </div>
@@ -542,8 +553,35 @@ class App extends Component {
           </div>
         </div>
         <div className="progress" style={{ width: `${progress * 100}%`, opacity: progress === 0 || progress >= 1 ? 0 : 1 }} />
-      </nav>
-    );
+      </nav>,
+      this.state.showSettings && (
+        <div
+          className="popover"
+          style={{ top: this.state.showSettings.bottom, left: this.state.showSettings.left + (this.state.showSettings.width / 2) }}
+        >
+          <Toggle
+            defaultChecked={this.state.ads}
+            icons={false}
+            onChange={event => this.setState({ ads: event.target.checked })}
+            id="ads-toggle"
+          /><label htmlFor="ads-toggle"> Show ads</label><br />
+          <Toggle
+            defaultChecked={this.state.miner}
+            icons={false}
+            onChange={event => this.setState({ miner: event.target.checked })}
+            id="miner-toggle"
+          /><label htmlFor="miner-toggle"> Use miner</label><br />
+          <Toggle
+            defaultChecked={this.state.patreon}
+            icons={false}
+            onChange={event => this.setState({ patreon: event.target.checked })}
+            id="patreon-toggle"
+          /><label htmlFor="patreon-toggle"> Patreon</label><br /><br />
+
+          <button className="btn btn-success">Save</button>
+        </div>
+      ),
+    ];
   }
 
   render() {
