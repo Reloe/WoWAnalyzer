@@ -13,6 +13,7 @@ import UnsupportedSpec from 'Parser/UnsupportedSpec/CONFIG';
 import './App.css';
 
 import GithubLogo from './Images/GitHub-Mark-Light-32px.png';
+import SettingsIcon from './Images/Settings';
 
 import Home from './Home';
 import FightSelecter from './FightSelecter';
